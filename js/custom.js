@@ -9,6 +9,7 @@ const menu_close = document.querySelector(".menu_close");
 let num = 0;
 let imgTop = 0;
 let isScroll = false;
+let footer_num = -1;
 
 for(let btn of navi_btn){
     btn.addEventListener("click", (e)=>{
@@ -35,6 +36,9 @@ for(let i=0; i<navi_btn.length; i++){
             for(let el of slide_img){
                 el.style.top = `calc(100% * ${-idx})` 
                 num = idx;
+                console.log(num);
+                if(num == 3){footer_num = 0;};
+                console.log(footer_num);
             };
         };
 
@@ -57,10 +61,12 @@ menu_close.addEventListener("click", (e)=>{
     e.preventDefault();
     menu_con.classList.remove("on");
 });
+let y = 0;
 
-document.querySelector("#main").addEventListener("mousewheel", (e)=>{
+window.addEventListener("mousewheel", (e)=>{
     let wheel = e.deltaY;
-
+    let isOn = document.querySelector(".menu_con").classList.contains("on");
+    if(isOn) return;
     if(isScroll) return;
 
     if(wheel < 0){
@@ -72,12 +78,30 @@ document.querySelector("#main").addEventListener("mousewheel", (e)=>{
     }
 });
 
+document.querySelector("#footer").addEventListener("mousewheel", (e)=>{
+    let wheel = e.deltaY;
+    if(wheel < 0){document.querySelector("#footer").classList.remove("on");};
+})
+
 function wheelUp(){
-    (num == inner_slide.length -1) ? num = inner_slide.length -1 : num++;
+    // (num == inner_slide.length -1) ? num = inner_slide.length -1 : num++;
+
+    if(num == inner_slide.length -1){
+        num = inner_slide.length -1;
+    } else{
+        num++;
+    };
 
     for(let el of navi_list){el.classList.remove("on");};
     for(let el of inner_slide){el.classList.remove("active");};
-    if(num >= 3){document.querySelector("body").classList.remove("h");};
+    if(num == 3){
+        
+        if(footer_num <= 0) {footer_num++ };
+        if(footer_num == 1){
+            document.querySelector("#footer").classList.add("on");
+            footer_num = 1;
+        }
+    };
 
     navi_list[num].classList.add("on");
     inner_slide[num].classList.add("active");
@@ -96,14 +120,17 @@ function wheelDown(){
 
     if(num == 0){
         num = 0;
-    } else if(num <= 3 && document.querySelector('html').scrollTop == 0){
-        document.querySelector("body").classList.add("h");
+    } else if(num <= 3){
         num--;
+        if(footer_num == 1){
+            footer_num = -1;
+            num = 3;
+        };
+        
     };
 
     for(let el of navi_list){el.classList.remove("on");};
     for(let el of inner_slide){el.classList.remove("active");};
-    // if(num <= 3 && document.querySelector('html').scrollTop == 0){document.querySelector("body").classList.add("h");}
 
     navi_list[num].classList.add("on");
     inner_slide[num].classList.add("active");
@@ -116,3 +143,5 @@ function wheelDown(){
         el.style.top = `calc(100% * ${-num})`;
     };
 };
+
+
